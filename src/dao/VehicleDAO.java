@@ -3,8 +3,6 @@ package dao;
 import models.Vehicle;
 import utils.DBConnection;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VehicleDAO {
 
@@ -30,6 +28,7 @@ public class VehicleDAO {
             }
 
         } catch (SQLException e) {
+            System.err.println("Error adding vehicle: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -51,14 +50,18 @@ public class VehicleDAO {
                 );
                 vehicle.setId(rs.getInt("id"));
                 vehicle.setEntryTime(rs.getTimestamp("entry_time").toLocalDateTime());
-                if (rs.getTimestamp("exit_time") != null) {
-                    vehicle.setExitTime(rs.getTimestamp("exit_time").toLocalDateTime());
+
+                Timestamp exitTime = rs.getTimestamp("exit_time");
+                if (exitTime != null) {
+                    vehicle.setExitTime(exitTime.toLocalDateTime());
                 }
+
                 vehicle.setUserId(rs.getLong("user_id"));
                 return vehicle;
             }
 
         } catch (SQLException e) {
+            System.err.println("Error getting vehicle: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -74,6 +77,7 @@ public class VehicleDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            System.err.println("Error updating vehicle exit: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
