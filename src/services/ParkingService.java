@@ -1,89 +1,56 @@
 package services;
 
-import models.ParkingSlot;
 import models.Vehicle;
-
-import java.util.ArrayList;
-import java.util.List;
+import dao.ParkingSlotDAO;
+import dao.VehicleDAO;
 
 public class ParkingService {
-    private List<ParkingSlot> slots;
 
-    public ParkingService(int totalSlots) {
-        slots = new ArrayList<>();
-        for (int i = 1; i <= totalSlots; i++) {
-            slots.add(new ParkingSlot(i));
-        }
-    }
+    public Integer parkVehicle(Vehicle vehicle) {
+        // First, add vehicle to database
+        if (VehicleDAO.addVehicle(vehicle)) {
+            // Then find available slot
+            Integer availableSlot = ParkingSlotDAO.findAvailableSlot();
 
-    // Allocate slot
-    public ParkingSlot parkVehicle(Vehicle vehicle) {
-        for (ParkingSlot slot : slots) {
-            if (!slot.isOccupied()) {
-                slot.parkVehicle(vehicle);
-                System.out.println(" Vehicle " + vehicle.getLicensePlate() +
-                        " parked at Slot " + slot.getSlotId());
-                return slot;
-            }
-        }
-        System.out.println(" No available slots!");
-        return null;
-    }
-
-    // Release slot (vehicle exits)
-    public Vehicle removeVehicle(String licensePlate) {
-        for (ParkingSlot slot : slots) {
-            if (slot.isOccupied() &&
-                    slot.getParkedVehicle().getLicensePlate().equals(licensePlate)) {
-
-                Vehicle vehicle = slot.getParkedVehicle();
-                slot.removeVehicle();
-                System.out.println(" Vehicle " + licensePlate +
-                        " removed from Slot " + slot.getSlotId());
-                return vehicle;
-            }
-        }
-        System.out.println(" Vehicle not found!");
-        return null;
-    }
-
-    // Show slots
-    // Show all slots with a summary
-    public void displaySlots() {
-        int occupiedCount = 0;
-        int freeCount = 0;
-
-        System.out.println("\n--- Parking Slots Status ---");
-        for (ParkingSlot slot : slots) {
-            String status;
-            if (slot.isOccupied()) {
-                status = "Occupied (" + slot.getParkedVehicle().getLicensePlate() + ")";
-                occupiedCount++;
+            if (availableSlot != null) {
+                // Allocate the slot to this vehicle
+                if (ParkingSlotDAO.allocateSlot(availableSlot, vehicle.getId())) {
+                    System.out.println(" Vehicle " + vehicle.getLicensePlate() +
+                            " parked at Slot " + availableSlot);
+                    return availableSlot;
+                }
             } else {
-                status = "Free";
-                freeCount++;
-            }
-            System.out.println("Slot " + slot.getSlotId() + ": " + status);
-        }
-
-        System.out.println("\n--- Summary ---");
-        System.out.println("Total Slots: " + slots.size());
-        System.out.println("Occupied: " + occupiedCount);
-        System.out.println("Free: " + freeCount);
-    }
-
-    // Allocate the nearest available slot automatically
-    public ParkingSlot allocateNearestSlot(Vehicle vehicle) {
-        for (ParkingSlot slot : slots) {
-            if (!slot.isOccupied()) {
-                slot.parkVehicle(vehicle);
-                System.out.println(" Vehicle " + vehicle.getLicensePlate() +
-                        " allocated to Nearest Slot " + slot.getSlotId());
-                return slot;
+                System.out.println(" No available slots!");
             }
         }
-        System.out.println(" No available slots to allocate!");
         return null;
     }
 
+    public boolean removeVehicle(String licensePlate) {
+        Vehicle vehicle = VehicleDAO.getVehicleByLicensePlate(licensePlate);
+
+        if (vehicle != null) {
+            // In real scenario, we would track which slot the vehicle is in
+            // For now, we'll implement a method to find slot by vehicle
+            if (VehicleDAO.updateVehicleExit(licensePlate)) {
+                System.out.println(" Vehicle " + licensePlate + " has exited.");
+                return true;
+            }
+        } else {
+            System.out.println(" Vehicle not found or already exited!");
+        }
+        return false;
+    }
+
+    public void displayParkingStatus() {
+        int totalSlots = 10; // This should come from database
+        int occupied = ParkingSlotDAO.getOccupiedSlotsCount();
+        int available = totalSlots - occupied;
+
+        System.out.println("\n--- Parking Status ---");
+        System.out.println("Total Slots: " + totalSlots);
+        System.out.println("Occupied: " + occupied);
+        System.out.println("Available: " + available);
+        System.out.println("Utilization: " + (occupied * 100 / totalSlots) + "%");
+    }
 }
