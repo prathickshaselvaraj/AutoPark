@@ -11,20 +11,32 @@ public class DBConnection {
 
     private static final Logger logger = Logger.getLogger(DBConnection.class.getName());
 
+    static {
+        try {
+            // Explicitly load MySQL driver — required when using plain javac + java with -cp
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            logger.info("MySQL JDBC Driver loaded successfully.");
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "MySQL JDBC Driver not found! Make sure mysql-connector-j.jar is on the classpath.", e);
+        }
+    }
+
     public static Connection getConnection() {
         Connection conn = null;
         try {
             Properties props = new Properties();
 
-            // Load properties using absolute path
-            FileInputStream input = new FileInputStream("E:/Projects/AutoPark/config/db.properties");
-            props.load(input);
+            // Load properties file — use relative path so project is portable
+            String configPath = "config/db.properties";
+            try (FileInputStream input = new FileInputStream(configPath)) {
+                props.load(input);
+            }
 
-            String url = props.getProperty("db.url");
-            String user = props.getProperty("db.user");
+            String url      = props.getProperty("db.url");
+            String user     = props.getProperty("db.user");
             String password = props.getProperty("db.password");
 
-            // Replace ${DB_PASSWORD} with actual environment variable
+            // Resolve environment variable placeholder if present
             if (password != null && password.contains("${DB_PASSWORD}")) {
                 String envPassword = System.getenv("DB_PASSWORD");
                 if (envPassword != null) {
@@ -34,11 +46,10 @@ public class DBConnection {
                 }
             }
 
-            // Append SSL/Key retrieval options for MySQL 8+
-            if (!url.contains("?")) {
-                url += "?useSSL=false&allowPublicKeyRetrieval=true";
-            } else {
-                url += "&useSSL=false&allowPublicKeyRetrieval=true";
+            // Append required MySQL 8+ connection options if not already present
+            if (url != null && !url.contains("useSSL")) {
+                url += (url.contains("?") ? "&" : "?")
+                        + "useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             }
 
             conn = DriverManager.getConnection(url, user, password);
