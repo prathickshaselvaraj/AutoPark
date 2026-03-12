@@ -1,93 +1,94 @@
-import models.Vehicle;
-import models.User;
-import services.ParkingService;
-import services.BillingService;
+import gui.AppConfig;
+import gui.LoginFrame;
 import utils.DBConnection;
 import utils.DBInitializer;
-import dao.UserDAO;
+
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
 
 public class App {
+
     public static void main(String[] args) {
-        System.out.println("Welcome to AutoPark - Parking Management System");
+        // Set Nimbus look and feel
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ignored) {}
 
-        // Initialize database connection
-        if (DBConnection.getConnection() != null) {
-            System.out.println(" Database Connected Successfully!");
-        } else {
-            System.out.println("Database Connection Failed!");
-            return;
-        }
+        SwingUtilities.invokeLater(() -> {
+            JWindow splash = showSplash();
 
-        // Initialize slots in database
-        DBInitializer.initializeSlots(10);
-        System.out.println("Parking slots initialized");
+            SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Boolean doInBackground() {
+                    Connection conn = DBConnection.getConnection();
+                    if (conn != null) {
+                        DBInitializer.initializeSlots(AppConfig.TOTAL_SLOTS);
+                        return true;
+                    }
+                    return false;
+                }
 
-        // Create services
-        ParkingService parkingService = new ParkingService();
-        BillingService billingService = new BillingService(50.0); // ₹50 per hour
-
-        // Display initial parking status
-        parkingService.displayParkingStatus();
-
-        // Test: Park a vehicle
-        System.out.println("\n--- Testing Vehicle Entry ---");
-        Vehicle vehicle1 = new Vehicle("TN-22-AB-1234", "Car");
-        vehicle1.setUserId(1); // Assuming user ID 1 exists
-
-        Integer allocatedSlot = parkingService.parkVehicle(vehicle1);
-        if (allocatedSlot != null) {
-            System.out.println("Vehicle allocated to slot: " + allocatedSlot);
-        } else {
-            System.out.println("Failed to park vehicle");
-        }
-
-        // Display updated status
-        parkingService.displayParkingStatus();
-
-        // Test: Park another vehicle
-        System.out.println("\n--- Testing Second Vehicle Entry ---");
-        Vehicle vehicle2 = new Vehicle("TN-22-CD-5678", "Bike");
-        vehicle2.setUserId(1);
-
-        Integer allocatedSlot2 = parkingService.parkVehicle(vehicle2);
-        if (allocatedSlot2 != null) {
-            System.out.println("Vehicle allocated to slot: " + allocatedSlot2);
-        }
-
-        // Display final status
-        parkingService.displayParkingStatus();
-
-        // Test: Vehicle exit
-        System.out.println("\n--- Testing Vehicle Exit ---");
-        boolean exitSuccess = parkingService.removeVehicle("TN-22-AB-1234");
-        if (exitSuccess) {
-            System.out.println("Vehicle exited successfully");
-            // Generate bill
-            // billingService.generateBill(vehicle1); // We'll fix this later
-        }
-
-        // Final status
-        parkingService.displayParkingStatus();
-
-        System.out.println("\n--- AutoPark System Ready ---");
-
-        // Test user authentication
-        testUserAuthentication();
+                @Override
+                protected void done() {
+                    splash.dispose();
+                    try {
+                        if (get()) {
+                            new LoginFrame().setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(null,
+                                    "Cannot connect to database.\nCheck config/db.properties and ensure MySQL is running.",
+                                    "Connection Failed", JOptionPane.ERROR_MESSAGE);
+                            System.exit(1);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            worker.execute();
+        });
     }
 
-    private static void testUserAuthentication() {
-        System.out.println("\n--- Testing User Authentication ---");
+    private static JWindow showSplash() {
+        JWindow splash = new JWindow();
+        JPanel panel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(0, 0, new Color(13, 27, 42),
+                        getWidth(), getHeight(), new Color(21, 101, 192));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        panel.setPreferredSize(new Dimension(420, 220));
+        panel.setBorder(BorderFactory.createLineBorder(new Color(79, 195, 247), 2));
 
-        // Check if admin user exists
-        User admin = UserDAO.getUserByUsername("admin");
-        if (admin != null) {
-            System.out.println("Admin user found: " + admin.getFullName());
-        } else {
-            System.out.println("Admin user not found");
-        }
+        JLabel icon  = new JLabel("🚗", SwingConstants.CENTER);
+        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 52));
+        JLabel title = new JLabel("AutoPark", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        title.setForeground(new Color(79, 195, 247));
+        JLabel sub   = new JLabel("Starting up, please wait...", SwingConstants.CENTER);
+        sub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        sub.setForeground(new Color(144, 164, 174));
 
-        // Test user validation
-        boolean isValid = UserDAO.validateUser("admin", "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi");
-        System.out.println("User validation test: " + (isValid ? "PASS" : "FAIL"));
+        JPanel center = new JPanel(new GridLayout(3, 1, 0, 8));
+        center.setOpaque(false);
+        center.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        center.add(icon); center.add(title); center.add(sub);
+        panel.add(center, BorderLayout.CENTER);
+        splash.add(panel);
+        splash.pack();
+        splash.setLocationRelativeTo(null);
+        splash.setVisible(true);
+        return splash;
     }
 }

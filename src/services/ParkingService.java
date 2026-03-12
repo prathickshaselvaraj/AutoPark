@@ -3,6 +3,10 @@ package services;
 import models.Vehicle;
 import dao.ParkingSlotDAO;
 import dao.VehicleDAO;
+import utils.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class ParkingService {
 
@@ -30,16 +34,40 @@ public class ParkingService {
         Vehicle vehicle = VehicleDAO.getVehicleByLicensePlate(licensePlate);
 
         if (vehicle != null) {
-            // In real scenario, we would track which slot the vehicle is in
-            // For now, we'll implement a method to find slot by vehicle
-            if (VehicleDAO.updateVehicleExit(licensePlate)) {
-                System.out.println(" Vehicle " + licensePlate + " has exited.");
-                return true;
+            // First free the slot occupied by this vehicle
+            if (freeSlotByVehicleId(vehicle.getId())) {
+                // Then update vehicle exit time
+                if (VehicleDAO.updateVehicleExit(licensePlate)) {
+                    System.out.println(" Vehicle " + licensePlate + " has exited and slot freed.");
+                    return true;
+                } else {
+                    System.out.println(" Error updating vehicle exit time!");
+                }
+            } else {
+                System.out.println(" Error freeing the parking slot!");
             }
         } else {
             System.out.println(" Vehicle not found or already exited!");
         }
         return false;
+    }
+
+    // New helper method to free slot by vehicle ID
+    private boolean freeSlotByVehicleId(int vehicleId) {
+        String sql = "UPDATE slots SET is_occupied = FALSE, vehicle_id = NULL WHERE vehicle_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, vehicleId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error freeing slot for vehicle ID " + vehicleId + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void displayParkingStatus() {
