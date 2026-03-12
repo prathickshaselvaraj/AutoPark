@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e4731435-b0d8-4c82-8b4d-4d636312d2d5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/mysql-connector-j-9.4.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/dao/AdminUserDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/AdminDashboard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/AppConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/LoginFrame.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/UserDashboard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/AdminUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/Booking.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/models/SlotInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoPark.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/db.properties.example" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/BookingDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/parking_lot.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/parking_lot.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dao/ParkingSlotDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/ParkingSlotDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dao/VehicleDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/dao/VehicleDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/ParkingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/ParkingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/DBConnection.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;prathickshaselvaraj&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/prathickshaselvaraj/AutoPark.git&quot;,
+    &quot;accountId&quot;: &quot;6789abb2-1e7d-4903-a9b1-282015902498&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="393tvJkP59rxk6QZvz57DHIcGnN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e4731435-b0d8-4c82-8b4d-4d636312d2d5" name="Changes" comment="" />
+      <created>1769936811702</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1769936811702</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

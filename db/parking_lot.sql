@@ -59,4 +59,28 @@ ALTER TABLE vehicles ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SE
 ALTER TABLE transactions ADD COLUMN payment_method ENUM('CASH', 'UPI', 'CARD') DEFAULT 'CASH';
 ALTER TABLE transactions ADD COLUMN payment_status ENUM('PENDING', 'PAID', 'FAILED') DEFAULT 'PENDING';
 
+-- Admin users table
+CREATE TABLE IF NOT EXISTS admin_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    role ENUM('ADMIN', 'OPERATOR') DEFAULT 'OPERATOR',
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default admin (password: admin123)
+INSERT INTO admin_users (username, password_hash, full_name, role) VALUES
+('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'ADMIN'),
+('operator', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Parking Operator', 'OPERATOR');
+
+-- Audit log table
+CREATE TABLE IF NOT EXISTS audit_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT,
+    action_description VARCHAR(255) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admin_users(id)
+);
 
